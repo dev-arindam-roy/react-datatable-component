@@ -1,70 +1,235 @@
-# Getting Started with Create React App
+# React DataTable Component
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```js
+import React, { useState, useEffect } from 'react';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import BeatLoader from "react-spinners/BeatLoader";
+import DataTable from 'react-data-table-component';
+import {
+    FiArrowDownCircle,
+    FiArrowUpCircle  
+} from "react-icons/fi";
 
-## Available Scripts
+/**
+React DataTable Doc
+https://react-data-table-component.netlify.app/?path=/docs/api-props--docs
 
-In the project directory, you can run:
+https://www.youtube.com/watch?v=3oHUtG0cjfY
+https://github.com/devopsdeveloper1107/React-Data-Table-Component/blob/main/src/component/Product.js
+https://www.youtube.com/watch?v=RiXSojXJS90&list=PLKvreMEGikMWRPUHl6FiCCZzCxoVAFYT4&index=5
+https://www.youtube.com/watch?v=nQFWW7Rq2Hs&list=PLKvreMEGikMWRPUHl6FiCCZzCxoVAFYT4&index=8
 
-### `npm start`
+https://www.youtube.com/watch?v=hson9BXU9F8&list=PLC3y8-rFHvwgWTSrDiwmUsl4ZvipOw9Cz&index=3
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+React Pagination
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+https://www.youtube.com/watch?v=g8iwLCogC04&list=PLKvreMEGikMWRPUHl6FiCCZzCxoVAFYT4&index=16
+ */
 
-### `npm test`
+const DataTableComponent = () => {
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    const columns= [
+        {
+            name:"Sr.No",
+            selector:(row)=>row.id,
+        },
+        {
+            name:"Title",
+            selector:(row)=>row.title,
+            sortable:true
+        },
+        {
+            name:"Category",
+            selector:(row)=>row.category,
+            sortable:true
+        },
+        {
+            name:"Price",
+            selector:(row)=>row.price,
+            sortable:true
+        },
+        {
+            name:"Image",
+            selector:(row)=><img  height ={70} width={80} src={ row.image} alt="xxx"/>,
+        },
+        {
+            name:"Action",
+            cell:(row)=>(
+                <div>
+                    <button className="btn btn-sm btn-danger mx-2" onClick={()=>handleDelete(row.id)}>Delete</button>
+                    <button className="btn btn-sm btn-success" onClick={()=>handleDelete(row.id)}>Edit</button>
+                </div>
+            )
+        }
 
-### `npm run build`
+    ];
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    const [data, setData]= useState([]);
+    const [search, SetSearch]= useState('');
+    const [filter, setFilter]= useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isDarktheme, setTheme] = useState(false);
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    const getProduct=async()=>{
+        try{
+            setIsLoading(true);
+            const req= await fetch("https://fakestoreapi.com/products?limit=100");
+            const res= await req.json();
+            setData(res);
+            setFilter(res);
+            setIsLoading(false);
+        } catch(error){
+            console.log(error);
+        }
+    }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    useEffect(()=>{
+        getProduct();
+    }, []);
 
-### `npm run eject`
+    useEffect(()=>{
+        const result= data.filter((item)=>{
+            return item.title.toLowerCase().match(search.toLocaleLowerCase());
+        });
+        setFilter(result);
+    },[search, data]);
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    const handleDelete=(val)=>{
+        const newdata = data.filter((item)=>item.id!==val);
+        setFilter(newdata);
+    }
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    const tableHeaderstyle={
+        headCells:{
+            style:{
+                fontWeight:"bold",
+                fontSize:"14px",
+                backgroundColor:"#ccc"
+    
+            },
+        },
+        rows:{
+            style:{
+                fontWeight:"bold",
+                fontSize:"14px"
+            },
+        },
+    }
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    const handleSelectedRows = (rows) => {
+        console.log(rows?.selectedRows);
+    }
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+    const handleDisabledRows = (rows) => {
+        console.log(rows);
+        if (parseInt(rows.price) > 10) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-## Learn More
+    const handlePreSelectedRows = (rows) => {
+        if (rows.id > 0 && rows.id < 4) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+    const handleExpendableRows = ({data}) => {
+        return <pre>{JSON.stringify(data, null, 2)}</pre>
+    }
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    const handleExpendableRowsDisabled = (rows) => {
+        if (rows.id === 10) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-### Code Splitting
+    const handlePreExpendableRows = (rows) => {
+        if (rows.id === 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  return (
+    <>
+        <Container fluid="md">
+            <Row className="mt-3">
+                <Col xs={12} md={12}>
+                    <h3><strong>React DataTable App</strong></h3>
+                </Col>
+            </Row>
+            <Row className="mt-3">
+                <Col xs={12} md={12}>
+                    <DataTable
+                        customStyles={ tableHeaderstyle}
+                        progressPending={isLoading}
+                        progressComponent={<BeatLoader color={"#065ae1"} />}
+                        columns={columns}
+                        data={filter}
+                        pagination
+                        selectableRows
+                        onSelectedRowsChange={handleSelectedRows}
+                        //selectableRowSelected={handlePreSelectedRows}
+                        selectableRowDisabled={handleDisabledRows}
+                        fixedHeader
+                        selectableRowsHighlight
+                        highlightOnHover
+                        defaultSortFieldId={4}
+                        actions={
+                            <div>
+                                <Form.Check
+                                    type="switch"
+                                    id="theme-switch"
+                                    label="Dark Mode?"
+                                    checked={isDarktheme}
+                                    onChange={(e) =>
+                                        e.target.checked
+                                        ? setTheme(true)
+                                        : setTheme(false)
+                                    }
+                                />
+                                <button className="btn btn-sm btn-secondary mx-2">Export PDF</button>
+                                <button className="btn btn-sm btn-secondary mx-2">Export CSV</button>
+                                <button className="btn btn-sm btn-primary">Add Product</button>
+                            </div>
+                        }
+                        subHeader
+                        subHeaderComponent={
+                            <input type="text"
+                            className="w-25 form-control"
+                            placeholder="Search..."
+                            value={ search}
+                            onChange={(e)=>SetSearch(e.target.value)}
+                            
+                            />
+                        }
+                        subHeaderAlign="right"
+                        expandableRows
+                        expandableRowsComponent={handleExpendableRows}
+                        expandableIcon={{ collapsed: <FiArrowDownCircle />, expanded: <FiArrowUpCircle /> }}
+                        expandableRowDisabled={handleExpendableRowsDisabled}
+                        expandableRowExpanded={handlePreExpendableRows}
+                        dense
+                        pointerOnHover
+                        theme={isDarktheme ? 'dark' : 'default'}
+                    />
+                </Col>
+            </Row>
+        </Container>
+    </>
+  )
+}
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default DataTableComponent
+```
