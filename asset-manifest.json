@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/dev-arindam-roy/react-datatable-component/static/css/main.16be4ca6.css",
-    "main.js": "/dev-arindam-roy/react-datatable-component/static/js/main.c4e47fef.js",
-    "static/js/453.7a26276e.chunk.js": "/dev-arindam-roy/react-datatable-component/static/js/453.7a26276e.chunk.js",
-    "index.html": "/dev-arindam-roy/react-datatable-component/index.html",
-    "main.16be4ca6.css.map": "/dev-arindam-roy/react-datatable-component/static/css/main.16be4ca6.css.map",
-    "main.c4e47fef.js.map": "/dev-arindam-roy/react-datatable-component/static/js/main.c4e47fef.js.map",
-    "453.7a26276e.chunk.js.map": "/dev-arindam-roy/react-datatable-component/static/js/453.7a26276e.chunk.js.map"
+    "main.css": "/react-datatable-component/static/css/main.16be4ca6.css",
+    "main.js": "/react-datatable-component/static/js/main.bac7c068.js",
+    "static/js/453.7a26276e.chunk.js": "/react-datatable-component/static/js/453.7a26276e.chunk.js",
+    "index.html": "/react-datatable-component/index.html",
+    "main.16be4ca6.css.map": "/react-datatable-component/static/css/main.16be4ca6.css.map",
+    "main.bac7c068.js.map": "/react-datatable-component/static/js/main.bac7c068.js.map",
+    "453.7a26276e.chunk.js.map": "/react-datatable-component/static/js/453.7a26276e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.16be4ca6.css",
-    "static/js/main.c4e47fef.js"
+    "static/js/main.bac7c068.js"
   ]
 }
